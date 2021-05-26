@@ -1,0 +1,28 @@
+[tool.poetry]
+name = "color-differences-analyzer"
+version = "0.0.1"
+description = "Command line interface to analyze differences of colors from images implemented with Python."
+authors = ["Leynier Gutiérrez González <leynier41@gmail.com>"]
+homepage = "https://github.com/leynier/color-differences-analyzer"
+repository = "https://github.com/leynier/color-differences-analyzer"
+documentation = "https://github.com/leynier/color-differences-analyzer"
+readme = "README.md"
+license = "MIT"
+
+[tool.poetry.scripts]
+cda = "color_differences_analyzer.main:app"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+typer = "^0.3.2"
+
+[tool.poetry.dev-dependencies]
+pytest = "^6.2.4"
+flake8 = "^3.9.2"
+black = "^21.5b1"
+isort = "^5.8.0"
+pytest-cov = "^2.12.0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
