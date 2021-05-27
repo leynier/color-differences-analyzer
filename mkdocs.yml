@@ -1,7 +1,7 @@
 site_name: Color Differences Analyzer
 site_url: https://github.com/leynier/color-differences-analyzer
 repo_url: https://github.com/leynier/color-differences-analyzer
-edit_uri: "https://github.com/leynier/color-differences-analyzer"/edit/main/docs
+edit_uri: https://github.com/leynier/color-differences-analyzer/edit/main/docs
 
 theme:
   name: material
