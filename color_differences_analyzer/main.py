@@ -3,6 +3,7 @@ from enum import Enum
 from pathlib import Path
 from typing import Callable, List, Tuple, Union, cast
 
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import typer
@@ -97,6 +98,11 @@ def dist2_command(
             )
     else:
         filenames = [item for item in file_or_dir.iterdir()]
+        filenames.sort(
+            key=lambda x: int(x.name[: x.name.rfind(".")])
+            if x.name[: x.name.rfind(".")].isnumeric()
+            else x.name
+        )
         total = len(filenames)
         results: List[Tuple[Union[float, List[float]], timedelta]] = []
         for i, filename in enumerate(filenames):
@@ -190,3 +196,72 @@ def to_excel(
         }
     )
     df.to_excel(excel_name)
+
+
+@app.command(name="table")
+def table_command(
+    file_or_dir: Path = typer.Argument(
+        ...,
+        exists=True,
+        file_okay=False,
+        dir_okay=True,
+        writable=False,
+        readable=True,
+        resolve_path=True,
+    ),
+):
+    filenames = [item for item in file_or_dir.iterdir()]
+    filenames.sort(
+        key=lambda x: int(x.name[: x.name.rfind(".")])
+        if x.name[: x.name.rfind(".")].isnumeric()
+        else x.name
+    )
+    filenames_len = len(filenames)
+    results = np.zeros((filenames_len, 3))
+    for index, filename in enumerate(filenames):
+        typer.echo(f"({index + 1}/{filenames_len}) Analyzing {filename.name}")
+        image_argb: np.ndarray = io.imread(filename)
+        image_rgb: np.ndarray = image_argb[:, :, :3]
+        image_flatted = image_rgb.reshape(
+            (image_rgb.shape[0] * image_rgb.shape[1], image_rgb.shape[2])
+        )
+        image_flatted_filter = image_flatted != [0.0, 0.0, 0.0]
+        image_flatted_filter = np.array([np.any(x) for x in image_flatted_filter])
+        image_flatted_filtered: np.ndarray = image_flatted[image_flatted_filter]
+        image_mean: np.ndarray = np.mean(image_flatted_filtered, 0)
+        results[index] = image_mean
+    table_array = results.reshape(filenames_len // 10, 10, 3)
+    cell_text = []
+    cell_color = []
+    for row in table_array:
+        cell_text.append([])
+        cell_color.append([])
+        for cell in row:
+            cell_int = np.vectorize(lambda x: round(x))(cell)
+            red, green, blue = cell_int
+            text = f"({red}, {green}, {blue})"
+            color = f"#{hex(red)[2:]}{hex(green)[2:]}{hex(blue)[2:]}"
+            cell_text[-1].append(text)
+            cell_color[-1].append(color)
+    table = plt.table(
+        cellText=cell_text,
+        rowLabels=[
+            f"Planta {i}"
+            for i in range(
+                1,
+                filenames_len // 10 + 1,
+            )
+        ],  # type: ignore
+        colLabels=[f"Hoja {i}" for i in range(1, 11)],  # type: ignore
+        cellColours=cell_color,
+        loc="center",
+        cellLoc="center",
+        rowLoc="center",
+        colLoc="center",
+    )
+    for i, row in enumerate(table_array):
+        for j, _ in enumerate(row):
+            table[(i + 1, j)].get_text().set_fontsize(20)
+            table[(i + 1, j)].get_text().set_color("white")
+    plt.axis("off")
+    plt.savefig("table.pdf")

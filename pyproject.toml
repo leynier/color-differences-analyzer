@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "color-differences-analyzer"
-version = "0.1.0"
+version = "0.2.0"
 description = "Command line interface to analyze differences of colors from images implemented with Python."
 authors = ["Leynier Gutiérrez González <leynier41@gmail.com>"]
 homepage = "https://github.com/leynier/color-differences-analyzer"
@@ -20,6 +20,7 @@ colormath = "^3.0.0"
 scikit-image = "^0.18.1"
 pandas = "^1.2.4"
 openpyxl = "^3.0.7"
+matplotlib = "^3.4.2"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.4"
