@@ -14,7 +14,7 @@ cda = "color_differences_analyzer.main:app"
 
 [tool.poetry.dependencies]
 python = "^3.8"
-typer = "^0.3.2"
+typer = ">=0.3.2,<0.5.0"
 numpy = "^1.20.3"
 colormath = "^3.0.0"
 scikit-image = "^0.18.1"
